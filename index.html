@@ -26,9 +26,32 @@
               <stop offset="55%" stop-color="#F4C572"/>
               <stop offset="100%" stop-color="#E39A34"/>
             </radialGradient>
+            <radialGradient id="craterGrad" cx="38%" cy="32%" r="75%">
+              <stop offset="0%" stop-color="#C97A22" stop-opacity="0.6"/>
+              <stop offset="100%" stop-color="#C97A22" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="craterGradSoft" cx="38%" cy="32%" r="75%">
+              <stop offset="0%" stop-color="#B96A1A" stop-opacity="0.35"/>
+              <stop offset="100%" stop-color="#B96A1A" stop-opacity="0"/>
+            </radialGradient>
+            <clipPath id="moonClip">
+              <circle cx="60" cy="60" r="34"/>
+            </clipPath>
           </defs>
           <circle cx="60" cy="60" r="46" fill="url(#loginMoonGrad)" opacity="0.16"/>
           <circle cx="60" cy="60" r="34" fill="url(#loginMoonGrad)"/>
+          <!-- bề mặt trăng: miệng núi lửa và vệt tối, cắt gọn theo hình tròn -->
+          <g clip-path="url(#moonClip)">
+            <circle cx="47" cy="45" r="7.5" fill="url(#craterGrad)"/>
+            <circle cx="45" cy="44" r="3" fill="#B96A1A" opacity="0.35"/>
+            <circle cx="71" cy="50" r="5" fill="url(#craterGrad)"/>
+            <circle cx="72" cy="49" r="2" fill="#B96A1A" opacity="0.3"/>
+            <circle cx="57" cy="71" r="6.5" fill="url(#craterGrad)"/>
+            <circle cx="56" cy="70" r="2.5" fill="#B96A1A" opacity="0.32"/>
+            <circle cx="76" cy="70" r="3.5" fill="url(#craterGradSoft)"/>
+            <circle cx="42" cy="63" r="4" fill="url(#craterGradSoft)"/>
+            <circle cx="64" cy="58" r="2.5" fill="url(#craterGradSoft)"/>
+          </g>
         </svg>
       </div>
       <span class="eyebrow">YODY · Trung thu đoàn viên</span>
