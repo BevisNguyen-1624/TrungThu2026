@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ghép Trăng Đoàn Viên · YODY</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<canvas id="stars"></canvas>
+<canvas id="confetti"></canvas>
+
+<div class="app">
+
+  <!-- LOGIN -->
+  <section id="screen-login" class="screen active">
+    <div class="login-card">
+      <div class="login-moon">
+        <svg viewBox="0 0 120 120" width="120" height="120">
+          <defs>
+            <radialGradient id="loginMoonGrad" cx="35%" cy="30%" r="75%">
+              <stop offset="0%" stop-color="#FFF6DE"/>
+              <stop offset="55%" stop-color="#F4C572"/>
+              <stop offset="100%" stop-color="#E39A34"/>
+            </radialGradient>
+          </defs>
+          <circle cx="60" cy="60" r="46" fill="url(#loginMoonGrad)" opacity="0.16"/>
+          <circle cx="60" cy="60" r="34" fill="url(#loginMoonGrad)"/>
+        </svg>
+      </div>
+      <span class="eyebrow">YODY · Trung thu đoàn viên</span>
+      <h1>Ghép <span>Trăng</span><br>Đoàn Viên</h1>
+      <p class="login-sub">Trăng đã vỡ thành nhiều mảnh. Trả lời đúng từng câu đố về YODY để góp mảnh, dựng lại vầng trăng tròn và mở khoá phần quà cuối hành trình.</p>
+      <form id="login-form">
+        <div class="field">
+          <label for="employee-code">Mã nhân viên</label>
+          <input id="employee-code" type="text" placeholder="VD: YD00123" autocomplete="off" inputmode="text">
+        </div>
+        <div class="login-err" id="login-err"></div>
+        <button type="submit" class="btn-primary">Bắt đầu hành trình</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- HOME -->
+  <section id="screen-home" class="screen">
+    <div class="brandbar" style="width:100%; max-width:460px;">
+      <div class="brandmark"><span class="dot"></span>YODY MOONFEST</div>
+      <div class="progress-pill">🌙 <span id="pill-count">0/10</span></div>
+    </div>
+
+    <div class="home-title">
+      <h2 id="home-heading">Chào bạn 👋</h2>
+      <p>Chạm vào một mảnh trăng để mở câu đố</p>
+    </div>
+
+    <div class="moon-stage" id="moon-stage"><!-- SVG injected by app.js --></div>
+
+    <div class="progress-track">
+      <div class="bar-bg"><div class="bar-fill" id="bar-fill"></div></div>
+      <div class="progress-label"><span id="progress-text">0 / 10 mảnh</span><span>Còn <span id="pieces-left">10</span> mảnh</span></div>
+    </div>
+
+    <div class="piece-rail" id="piece-rail"></div>
+    <div class="footer-note">Hoàn thành cả 10 mảnh để mở khoá quà tặng đặc biệt 🎁</div>
+  </section>
+
+  <!-- COMPLETE -->
+  <section id="screen-complete" class="screen">
+    <div class="full-moon"><div class="disc"></div></div>
+    <h2 class="complete-title">🌕 Chúc mừng!</h2>
+    <p class="complete-sub">Bạn đã ghép lại trọn vẹn vầng trăng Trung thu YODY. Mỗi mảnh ghép là một phần câu chuyện — khi trăng tròn, đó cũng là lúc đại gia đình YODY đoàn viên.</p>
+    <div class="reward-box">
+      <div class="label">Mã quà tặng của bạn</div>
+      <div class="code" id="reward-code">YODY-MOON-2026</div>
+      <div class="reward-note">Đưa mã này cho ban tổ chức tại quầy sự kiện để nhận quà nhé.</div>
+    </div>
+    <button class="btn-ghost" id="copy-reward">Sao chép mã quà tặng</button>
+  </section>
+
+</div>
+
+<!-- PUZZLE MODAL -->
+<div class="overlay" id="puzzle-overlay">
+  <div class="modal">
+    <button class="modal-close" id="modal-close" aria-label="Đóng">✕</button>
+    <div class="modal-tag" id="modal-tag">Mảnh 1 / 10</div>
+    <h3 id="modal-question">Câu hỏi</h3>
+    <div id="modal-options"></div>
+    <div class="feedback" id="modal-feedback"></div>
+    <button class="btn-primary" id="modal-submit">Trả lời</button>
+  </div>
+</div>
+
+<!-- Thứ tự nạp quan trọng: config.js phải nạp TRƯỚC app.js -->
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
