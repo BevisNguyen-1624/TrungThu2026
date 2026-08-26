@@ -4,12 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Ghép Trăng Đoàn Viên · YODY</title>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 </head>
-<body data-state="IDLE">
-
+<body>
 <canvas id="stars"></canvas>
 <canvas id="confetti"></canvas>
 
@@ -20,41 +20,42 @@
     <div class="login-card">
       <div class="login-moon">
         <div class="login-moon-halo"></div>
-        <img class="login-moon-photo" src="assets/moon-real.png" alt="Mặt trăng"
-             onerror="this.style.display='none'; this.parentElement.style.background='radial-gradient(circle, #fff9e8, #f5c518 50%, #b8860b)'; this.parentElement.style.borderRadius='50%';">
+        <img class="login-moon-photo" src="assets/moon-real.png" alt="Mặt trăng">
       </div>
+      </div>
+      <span class="eyebrow">YODY · Trung thu đoàn viên</span>
+      <h1>Ghép <span>Trăng</span><br>Đoàn Viên</h1>
+      <p class="login-sub">Trăng đã vỡ thành nhiều mảnh. Trả lời đúng từng câu đố về YODY để góp mảnh, dựng lại vầng trăng tròn và mở khoá phần quà cuối hành trình.</p>
+      <form id="login-form">
+        <div class="field">
+          <label for="employee-code">Mã nhân viên</label>
+          <input id="employee-code" type="text" placeholder="VD: YD00123" autocomplete="off" inputmode="text">
+        </div>
+        <div class="login-err" id="login-err"></div>
+        <button type="submit" class="btn-primary">Bắt đầu hành trình</button>
+      </form>
     </div>
-    <span class="eyebrow">YODY · Trung thu đoàn viên 2026</span>
-    <h1>Ghép <span>Trăng</span><br>Đoàn Viên</h1>
-    <p class="login-sub">Trăng đã vỡ thành nhiều mảnh. Trả lời đúng từng câu đố về YODY để góp mảnh, dựng lại vầng trăng tròn và mở khoá phần quà cuối hành trình.</p>
-    <form id="login-form">
-      <div class="field">
-        <label for="employee-code">Mã nhân viên</label>
-        <input id="employee-code" type="text" placeholder="VD: YD00123" autocomplete="off" inputmode="text">
-      </div>
-      <div class="login-err" id="login-err"></div>
-      <button type="submit" class="btn-primary">Bắt đầu hành trình</button>
-    </form>
   </section>
 
-  <!-- HOME / PUZZLE -->
+  <!-- HOME -->
   <section id="screen-home" class="screen">
     <div class="brandbar" style="width:100%; max-width:460px;">
       <div class="brandmark"><span class="dot"></span>YODY MOONFEST</div>
       <div class="progress-pill">🌙 <span id="pill-count">0/10</span></div>
     </div>
+
     <div class="home-title">
       <h2 id="home-heading">Chào bạn 👋</h2>
       <p>Chạm vào một mảnh trăng để mở câu đố</p>
     </div>
-    <div class="moon-stage" id="moon-stage"></div>
+
+    <div class="moon-stage" id="moon-stage"><!-- SVG injected by app.js --></div>
+
     <div class="progress-track">
       <div class="bar-bg"><div class="bar-fill" id="bar-fill"></div></div>
-      <div class="progress-label">
-        <span id="progress-text">0 / 10 mảnh</span>
-        <span>Còn <span id="pieces-left">10</span> mảnh</span>
-      </div>
+      <div class="progress-label"><span id="progress-text">0 / 10 mảnh</span><span>Còn <span id="pieces-left">10</span> mảnh</span></div>
     </div>
+
     <div class="piece-rail" id="piece-rail"></div>
     <div class="footer-note">Hoàn thành cả 10 mảnh để mở khoá quà tặng đặc biệt 🎁</div>
   </section>
@@ -86,7 +87,7 @@
   </div>
 </div>
 
-<!-- Thứ tự nạp quan trọng: config.js TRƯỚC app.js -->
+<!-- Thứ tự nạp quan trọng: config.js phải nạp TRƯỚC app.js -->
 <script src="js/config.js"></script>
 <script src="js/app.js"></script>
 </body>
