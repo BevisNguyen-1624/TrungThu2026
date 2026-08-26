@@ -19,40 +19,9 @@
   <section id="screen-login" class="screen active">
     <div class="login-card">
       <div class="login-moon">
-        <svg viewBox="0 0 120 120" width="100%" height="100%">
-          <defs>
-            <radialGradient id="loginMoonGrad" cx="35%" cy="30%" r="75%">
-              <stop offset="0%" stop-color="#FFFFFF"/>
-              <stop offset="55%" stop-color="#E3E4E8"/>
-              <stop offset="100%" stop-color="#AFB1B8"/>
-            </radialGradient>
-            <radialGradient id="craterGrad" cx="38%" cy="32%" r="75%">
-              <stop offset="0%" stop-color="#7C7E86" stop-opacity="0.55"/>
-              <stop offset="100%" stop-color="#7C7E86" stop-opacity="0"/>
-            </radialGradient>
-            <radialGradient id="craterGradSoft" cx="38%" cy="32%" r="75%">
-              <stop offset="0%" stop-color="#8E9098" stop-opacity="0.32"/>
-              <stop offset="100%" stop-color="#8E9098" stop-opacity="0"/>
-            </radialGradient>
-            <clipPath id="moonClip">
-              <circle cx="60" cy="60" r="34"/>
-            </clipPath>
-          </defs>
-          <circle cx="60" cy="60" r="46" fill="url(#loginMoonGrad)" opacity="0.16"/>
-          <circle cx="60" cy="60" r="34" fill="url(#loginMoonGrad)"/>
-          <!-- bề mặt trăng: miệng núi lửa và vệt tối, cắt gọn theo hình tròn -->
-          <g clip-path="url(#moonClip)">
-            <circle cx="47" cy="45" r="7.5" fill="url(#craterGrad)"/>
-            <circle cx="45" cy="44" r="3" fill="#6E7078" opacity="0.35"/>
-            <circle cx="71" cy="50" r="5" fill="url(#craterGrad)"/>
-            <circle cx="72" cy="49" r="2" fill="#6E7078" opacity="0.3"/>
-            <circle cx="57" cy="71" r="6.5" fill="url(#craterGrad)"/>
-            <circle cx="56" cy="70" r="2.5" fill="#6E7078" opacity="0.32"/>
-            <circle cx="76" cy="70" r="3.5" fill="url(#craterGradSoft)"/>
-            <circle cx="42" cy="63" r="4" fill="url(#craterGradSoft)"/>
-            <circle cx="64" cy="58" r="2.5" fill="url(#craterGradSoft)"/>
-          </g>
-        </svg>
+        <div class="login-moon-halo"></div>
+        <img class="login-moon-photo" src="assets/moon-real.png" alt="Mặt trăng">
+      </div>
       </div>
       <span class="eyebrow">YODY · Trung thu đoàn viên</span>
       <h1>Ghép <span>Trăng</span><br>Đoàn Viên</h1>
