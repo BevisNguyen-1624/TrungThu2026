@@ -93,13 +93,13 @@ function buildMoonSVG(){
   <svg viewBox="0 0 400 400" width="400" height="400" role="img" aria-label="Mặt trăng ghép mảnh">
     <defs>
       <radialGradient id="moonGradient" cx="35%" cy="30%" r="80%">
-        <stop offset="0%" stop-color="#FFF6DE"/>
-        <stop offset="55%" stop-color="#F4C572"/>
-        <stop offset="100%" stop-color="#E39A34"/>
+        <stop offset="0%" stop-color="#FFFFFF"/>
+        <stop offset="55%" stop-color="#E3E4E8"/>
+        <stop offset="100%" stop-color="#AFB1B8"/>
       </radialGradient>
       <radialGradient id="glowGrad" cx="50%" cy="50%" r="50%">
-        <stop offset="0%" stop-color="#F4C572" stop-opacity="0.45"/>
-        <stop offset="100%" stop-color="#F4C572" stop-opacity="0"/>
+        <stop offset="0%" stop-color="#D7D9DE" stop-opacity="0.45"/>
+        <stop offset="100%" stop-color="#D7D9DE" stop-opacity="0"/>
       </radialGradient>
     </defs>
     <circle class="moon-core-glow" cx="200" cy="200" r="185" fill="url(#glowGrad)"></circle>
