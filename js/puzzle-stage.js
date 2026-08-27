@@ -288,7 +288,7 @@ const PuzzleStage = (() => {
           });
         });
       })
-      .to({}, { duration: 1.15 }) // chờ gần hết các mảnh bay xong
+      .to({}, { duration: 0.8 }) // chờ gần hết các mảnh bay xong
       // Flash toàn màn hình che khoảnh khắc chuyển sang màn puzzle thật
       .to(flash, { opacity: 1, duration: 0.5, ease: 'power1.in' })
       .call(() => {
