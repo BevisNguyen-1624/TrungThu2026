@@ -184,16 +184,20 @@ const PuzzleStage = (() => {
     g.setAttribute('transform', `translate(${heroX} ${heroY}) scale(${heroScale}) translate(-200 -200)`);
     svg.appendChild(g);
 
+    // group riêng để rung nhẹ (translate qua CSS), tách khỏi transform định vị của g
+    const gShake = document.createElementNS(svgNS, 'g');
+    g.appendChild(gShake);
+
     const glow = document.createElementNS(svgNS, 'circle');
     glow.setAttribute('cx', '200'); glow.setAttribute('cy', '200'); glow.setAttribute('r', '230');
     glow.setAttribute('fill', 'url(#moonGlowGrad)');
-    g.appendChild(glow);
+    gShake.appendChild(glow);
 
     const disc = document.createElementNS(svgNS, 'circle');
     disc.setAttribute('cx', '200'); disc.setAttribute('cy', '200'); disc.setAttribute('r', String(GEO.R));
     disc.setAttribute('fill', 'url(#moonTexture)');
     disc.setAttribute('class', 'intro-disc');
-    g.appendChild(disc);
+    gShake.appendChild(disc);
 
     const crackGroup = document.createElementNS(svgNS, 'g');
     crackGroup.setAttribute('class', 'intro-cracks');
@@ -203,7 +207,7 @@ const PuzzleStage = (() => {
       path.setAttribute('class', 'intro-crack-line');
       crackGroup.appendChild(path);
     });
-    g.appendChild(crackGroup);
+    gShake.appendChild(crackGroup);
 
     const pieceGroup = document.createElementNS(svgNS, 'g');
     pieceGroup.setAttribute('class', 'intro-pieces');
@@ -217,7 +221,7 @@ const PuzzleStage = (() => {
       pieceGroup.appendChild(path);
       piecePaths[p.id] = path;
     });
-    g.appendChild(pieceGroup);
+    gShake.appendChild(pieceGroup);
 
     gsap.set(overlay, { opacity: 0 });
     gsap.set(disc, { transformOrigin: '200px 200px', scale: 0.6, opacity: 0 });
@@ -237,10 +241,26 @@ const PuzzleStage = (() => {
       .to({}, { duration: 0.28 }) // giữ yên ngắn để tạo cảm giác chuẩn bị
       .call(() => setState('MOON_CRACKING'))
       // Phase 2 — các vết nứt lan ra, lệch thời gian nhẹ, không đồng loạt
+      // + rung nhẹ tăng dần, như thể mặt trăng đang chịu áp lực trước khi vỡ
       .to(crackGroup.children, {
         opacity: 1, duration: 0.32, ease: 'power1.out',
         stagger: { each: 0.07, from: 'random' }
-      })
+      }, 'crack')
+      .fromTo(gShake, {
+        x: 0, y: 0
+      }, {
+        keyframes: [
+          { x: 0.6,  y: -0.5, duration: 0.05 },
+          { x: -0.8, y: 0.6,  duration: 0.05 },
+          { x: 0.9,  y: 0.4,  duration: 0.05 },
+          { x: -1.1, y: -0.7, duration: 0.05 },
+          { x: 1.3,  y: 0.8,  duration: 0.05 },
+          { x: -1.6, y: -0.9, duration: 0.05 },
+          { x: 1.8,  y: 1.0,  duration: 0.05 },
+          { x: 0,    y: 0,    duration: 0.05 }
+        ],
+        ease: 'none'
+      }, 'crack')
       .to({}, { duration: 0.12 })
       .call(() => setState('MOON_SHATTERING'))
       // Phase 3 — vỡ thành 10 mảnh, mỗi mảnh bay theo hướng/tốc độ khác nhau
