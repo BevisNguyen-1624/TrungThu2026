@@ -290,13 +290,13 @@ const PuzzleStage = (() => {
       })
       .to({}, { duration: 1.15 }) // chờ gần hết các mảnh bay xong
       // Flash toàn màn hình che khoảnh khắc chuyển sang màn puzzle thật
-      .to(flash, { opacity: 1, duration: 1, ease: 'power1.in' })
+      .to(flash, { opacity: 1, duration: 0.5, ease: 'power1.in' })
       .call(() => {
         // đúng lúc màn hình trắng loá che khuất mọi thứ: hiện màn puzzle thật phía sau
         setState('PUZZLE_ACTIVE');
         onDone && onDone();
       })
-      .to(flash, { opacity: 0, duration: 1, ease: 'power2.out' })
+      .to(flash, { opacity: 0, duration: 0.5, ease: 'power2.out' })
       .call(() => overlay.remove());
 
     return tl;
