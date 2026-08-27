@@ -108,7 +108,7 @@ button{font-family:var(--font-body); cursor:pointer;}
 .login-err{color:var(--danger); font-size:13px; font-weight:600; min-height:18px; margin-top:2px;}
 
 /* ---------- Home / puzzle stage ---------- */
-#screen-home{padding:6px 16px 60px; align-items:center; justify-content:center; transition:opacity .4s ease;}
+#screen-home{padding:6px 16px 60px; align-items:center; justify-content:center;}
 #screen-home.prepping{opacity:0;}
 .home-title{text-align:center; margin:6px 0 4px;}
 .home-title h2{font-size:clamp(20px,5.5vw,26px); color:var(--white);}
@@ -154,6 +154,10 @@ button{font-family:var(--font-body); cursor:pointer;}
 #intro-svg{position:absolute; inset:0;}
 .intro-crack-line{ fill:none; stroke:#050B1A; stroke-width:3.4; stroke-linecap:round; stroke-linejoin:round; }
 .intro-piece-path{ stroke:rgba(255,255,255,.35); stroke-width:1; }
+.intro-flash{
+  position:absolute; inset:0; background:#FFFFFF; opacity:0;
+  pointer-events:none;
+}
 
 .progress-track{width:100%; max-width:380px; margin-top:6px;}
 .progress-track .bar-bg{height:8px; border-radius:999px; background:rgba(255,255,255,.08); overflow:hidden;}

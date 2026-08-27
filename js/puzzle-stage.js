@@ -175,9 +175,10 @@ const PuzzleStage = (() => {
     const overlay = document.createElement('div');
     overlay.id = 'intro-overlay';
     overlay.className = 'intro-overlay';
-    overlay.innerHTML = `<svg id="intro-svg" width="${vw}" height="${vh}" overflow="visible"></svg>`;
+    overlay.innerHTML = `<svg id="intro-svg" width="${vw}" height="${vh}" overflow="visible"></svg><div class="intro-flash"></div>`;
     document.body.appendChild(overlay);
     const svg = overlay.querySelector('#intro-svg');
+    const flash = overlay.querySelector('.intro-flash');
     const svgNS = 'http://www.w3.org/2000/svg';
 
     const g = document.createElementNS(svgNS, 'g');
@@ -227,13 +228,7 @@ const PuzzleStage = (() => {
     gsap.set(disc, { transformOrigin: '200px 200px', scale: 0.6, opacity: 0 });
     gsap.set(crackGroup.children, { opacity: 0 });
 
-    const tl = gsap.timeline({
-      onComplete: () => {
-        setState('PUZZLE_ACTIVE');
-        overlay.remove();
-        onDone && onDone();
-      }
-    });
+    const tl = gsap.timeline();
 
     // Phase 1 — trăng nguyên vẹn hiện ra, đứng yên chuẩn bị
     tl.to(overlay, { opacity: 1, duration: 0.35, ease: 'power1.out' })
@@ -293,7 +288,18 @@ const PuzzleStage = (() => {
           });
         });
       })
-      .to({}, { duration: 1.25 }); // chờ hết các mảnh bay xong trước khi kết thúc timeline
+      .to({}, { duration: 1.15 }) // chờ gần hết các mảnh bay xong
+      // Flash toàn màn hình che khoảnh khắc chuyển sang màn puzzle thật
+      .to(flash, { opacity: 1, duration: 0.1, ease: 'power1.in' })
+      .call(() => {
+        // đúng lúc màn hình trắng loá che khuất mọi thứ: hiện màn puzzle thật phía sau
+        setState('PUZZLE_ACTIVE');
+        onDone && onDone();
+      })
+      .to(flash, { opacity: 0, duration: 0.5, ease: 'power2.out' })
+      .call(() => overlay.remove());
+
+    return tl;
   }
 
   return {
