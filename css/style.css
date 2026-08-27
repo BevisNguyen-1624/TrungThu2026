@@ -107,45 +107,53 @@ button{font-family:var(--font-body); cursor:pointer;}
 }
 .login-err{color:var(--danger); font-size:13px; font-weight:600; min-height:18px; margin-top:2px;}
 
-/* ---------- Home ---------- */
-#screen-home{padding:6px 16px 60px; align-items:center; justify-content:center;}
+/* ---------- Home / puzzle stage ---------- */
+#screen-home{padding:6px 16px 60px; align-items:center; justify-content:center; transition:opacity .4s ease;}
+#screen-home.prepping{opacity:0;}
 .home-title{text-align:center; margin:6px 0 4px;}
 .home-title h2{font-size:clamp(20px,5.5vw,26px); color:var(--white);}
 .home-title p{margin:6px 0 0; font-size:13.5px; color:#9FADD1;}
-.moon-stage{
-  width:min(78vw, 340px); aspect-ratio:1/1; margin:22px auto 8px; position:relative;
-}
-.moon-stage svg{width:100%; height:100%; overflow:visible;}
-.piece-path{
-  cursor:pointer; transition:filter .25s ease, transform .25s ease;
-  transform-origin:200px 200px;
-}
-.piece-path.locked{fill:var(--locked); stroke:var(--locked-line); stroke-width:2;}
-.piece-path.locked:hover{filter:brightness(1.25); transform:scale(1.015);}
-.piece-path.unlocked{
-  fill:url(#moonGradient); stroke:rgba(255,255,255,.9); stroke-width:1.4;
-  filter:drop-shadow(0 0 8px rgba(220,222,228,.55));
-}
-.piece-path.pulse{animation:piecePulse 900ms ease-out;}
-@keyframes piecePulse{
-  0%{filter:brightness(2.6) drop-shadow(0 0 24px rgba(255,255,255,1)); transform:scale(1.12);}
-  60%{filter:brightness(1.6) drop-shadow(0 0 16px rgba(220,222,228,.9)); transform:scale(1.03);}
-  100%{filter:drop-shadow(0 0 8px rgba(220,222,228,.55)); transform:scale(1);}
-}
-.lock-icon{font-size:15px; pointer-events:none; opacity:.85;}
-.moon-core-glow{opacity:.35; transition:opacity .6s ease;}
 
-.piece-rail{
-  display:flex; flex-wrap:wrap; justify-content:center; gap:10px;
-  width:100%; max-width:460px; padding:6px 4px 14px; margin-top:6px;
+.puzzle-area{
+  position:relative; width:100%; flex:1; min-height:340px;
+  display:flex; align-items:center; justify-content:center;
 }
-.chip{
-  flex:0 0 auto; width:52px; height:52px; border-radius:14px; border:1.5px solid rgba(255,255,255,.12);
-  background:rgba(255,255,255,.05); display:flex; align-items:center; justify-content:center;
-  font-size:19px; font-weight:700; color:#8CA0D6; position:relative; transition:all .2s ease;
+.moon-target-stage{
+  position:relative; width:min(48vw, 230px); aspect-ratio:1/1;
 }
-.chip.unlocked{border-color:rgba(220,222,228,.55); background:rgba(220,222,228,.14); color:#E3E4E8; box-shadow:0 0 12px -3px rgba(220,222,228,.5);}
-.chip.active-ring{outline:2px solid var(--moon-gold-soft); outline-offset:2px;}
+.moon-target-stage svg{overflow:visible;}
+.target-piece{ transition:filter .3s ease; }
+.target-piece.locked{fill:var(--locked); stroke:var(--locked-line); stroke-width:2;}
+.target-piece.unlocked{
+  fill:url(#moonTexture); stroke:rgba(255,255,255,.85); stroke-width:1.2;
+  filter:drop-shadow(0 0 9px rgba(220,222,228,.55));
+}
+.target-piece.pulse{animation:targetPulse 900ms ease-out;}
+@keyframes targetPulse{
+  0%{filter:brightness(2.2) drop-shadow(0 0 22px rgba(255,255,255,1)); transform:scale(1.08); transform-box:fill-box; transform-origin:center;}
+  100%{filter:drop-shadow(0 0 9px rgba(220,222,228,.55)); transform:scale(1); transform-box:fill-box; transform-origin:center;}
+}
+.target-moon-glow{opacity:.5;}
+
+/* mảnh rời rạc, có thể click, đặt bằng vị trí tuyệt đối trên toàn màn hình */
+.loose-piece{
+  position:fixed; z-index:20; cursor:pointer;
+  transform:rotate(var(--tilt,0deg));
+  filter:drop-shadow(0 4px 10px rgba(0,0,0,.45));
+  transition:filter .2s ease;
+  touch-action:manipulation;
+}
+.loose-piece:hover, .loose-piece:focus-visible{ filter:drop-shadow(0 0 12px rgba(230,232,238,.75)); outline:none; }
+.loose-piece-path{ fill:url(#moonTexture); stroke:rgba(255,255,255,.5); stroke-width:1.2; }
+
+/* ---------- Intro shatter cinematic ---------- */
+.intro-overlay{
+  position:fixed; inset:0; z-index:200; background:var(--night-deep);
+  display:flex; align-items:center; justify-content:center; pointer-events:none;
+}
+#intro-svg{position:absolute; inset:0;}
+.intro-crack-line{ fill:none; stroke:#050B1A; stroke-width:3.4; stroke-linecap:round; stroke-linejoin:round; }
+.intro-piece-path{ stroke:rgba(255,255,255,.35); stroke-width:1; }
 
 .progress-track{width:100%; max-width:380px; margin-top:6px;}
 .progress-track .bar-bg{height:8px; border-radius:999px; background:rgba(255,255,255,.08); overflow:hidden;}

@@ -1,9 +1,9 @@
 /* =============================================================================
    APP.JS — LOGIC CHÍNH CỦA MINIGAME
-   File này đọc dữ liệu từ CONFIG (định nghĩa trong config.js, phải được nạp
-   TRƯỚC file này trong index.html) và điều khiển toàn bộ giao diện, trạng thái,
-   hiệu ứng. Thường không cần sửa file này khi tái sử dụng cho campaign khác —
-   chỉ cần sửa config.js và style.css.
+   Đọc dữ liệu từ CONFIG (config.js, nạp TRƯỚC file này) và điều phối toàn bộ
+   giao diện + animation (qua PuzzleStage, moon-geometry.js, puzzle-stage.js).
+   Thường không cần sửa file này khi tái sử dụng cho campaign khác — chỉ cần
+   sửa config.js và style.css.
    ============================================================================= */
 
 const TOTAL = CONFIG.pieces.length;
@@ -13,6 +13,8 @@ const state = {
   activePieceId: null,
   selectedOptionIdx: null
 };
+
+const GEO = PuzzleStage.init(TOTAL);
 
 /* ---------------- backend logging (Google Sheet via Apps Script) -------- */
 function logEvent(type, payload){
@@ -27,9 +29,6 @@ function logEvent(type, payload){
 }
 
 /* ---------------- starfield background ---------------------------------- */
-/* Wrapped defensively: if canvas 2D context is unavailable (privacy mode,
-   fingerprint-blocking extensions, sandboxed preview, etc.) this must fail
-   silently and never block the rest of the app's script from running. */
 (function stars(){
   try{
     const c = document.getElementById('stars');
@@ -44,98 +43,16 @@ function logEvent(type, payload){
         pts.forEach(p=>{ p.a += p.s; const op = Math.abs(Math.sin(p.a));
           ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,7); ctx.fillStyle=`rgba(244,224,180,${op*.8})`; ctx.fill(); });
         requestAnimationFrame(draw);
-      }catch(e){ /* stop silently, never throw past this point */ }
+      }catch(e){ }
     }
     size(); addEventListener('resize', size); draw();
-  }catch(e){ /* decorative only — app must keep working without it */ }
+  }catch(e){ }
 })();
 
-/* ---------------- moon SVG: shattered pieces radiating from centre ------ */
-const CX=200, CY=200, R=170;
-function seeded(n){ const x = Math.sin(n*999.7)*10000; return x - Math.floor(x); }
-function polar(r, deg){ const rad = (deg-90)*Math.PI/180; return { x: CX + r*Math.cos(rad), y: CY + r*Math.sin(rad) }; }
-
-// crack polyline from centre to outer edge for boundary k
-function boundaryPoints(k){
-  const angle = k * (360/TOTAL);
-  const stops = [0, .32, .68, 1];
-  return stops.map((t,i)=>{
-    const r = t*R;
-    let jitterAngle = 0;
-    if(i>0 && i<stops.length-1){
-      const amp = 7 * Math.sin(t*Math.PI); // zero at ends, max mid
-      const dir = seeded(k*7+i) > .5 ? 1 : -1;
-      jitterAngle = dir * amp * (180/(Math.PI*Math.max(r,1)));
-    }
-    return polar(r, angle + jitterAngle);
-  });
-}
-function buildMoonSVG(){
-  const boundaries = Array.from({length:TOTAL}, (_,k)=>boundaryPoints(k));
-  let piecesSVG = "";
-  const centers = [];
-  for(let i=0;i<TOTAL;i++){
-    const b0 = boundaries[i];
-    const b1 = boundaries[(i+1)%TOTAL];
-    const a0 = i*(360/TOTAL);
-    let d = `M ${CX} ${CY} `;
-    for(let j=1;j<b0.length;j++) d += `L ${b0[j].x.toFixed(2)} ${b0[j].y.toFixed(2)} `;
-    d += `A ${R} ${R} 0 0 1 ${b1[b1.length-1].x.toFixed(2)} ${b1[b1.length-1].y.toFixed(2)} `;
-    for(let j=b1.length-2;j>=0;j--) d += `L ${b1[j].x.toFixed(2)} ${b1[j].y.toFixed(2)} `;
-    d += "Z";
-    const labelPt = polar(R*0.62, a0 + (360/TOTAL)/2);
-    centers.push(labelPt);
-    piecesSVG += `<path class="piece-path locked" id="piece-${i+1}" data-id="${i+1}" d="${d}"></path>`;
-  }
-  let labelsSVG = centers.map((p,i)=>`<text class="piece-num" x="${p.x.toFixed(1)}" y="${p.y.toFixed(1)}" text-anchor="middle" dominant-baseline="middle" font-family="Baloo 2" font-weight="700" font-size="15" fill="#ffffff" fill-opacity="0" id="num-${i+1}">${i+1}</text>`).join("");
-
-  return `
-  <svg viewBox="0 0 400 400" width="400" height="400" role="img" aria-label="Mặt trăng ghép mảnh">
-    <defs>
-      <radialGradient id="moonGradient" cx="35%" cy="30%" r="80%">
-        <stop offset="0%" stop-color="#FFFFFF"/>
-        <stop offset="55%" stop-color="#E3E4E8"/>
-        <stop offset="100%" stop-color="#AFB1B8"/>
-      </radialGradient>
-      <radialGradient id="glowGrad" cx="50%" cy="50%" r="50%">
-        <stop offset="0%" stop-color="#D7D9DE" stop-opacity="0.45"/>
-        <stop offset="100%" stop-color="#D7D9DE" stop-opacity="0"/>
-      </radialGradient>
-    </defs>
-    <circle class="moon-core-glow" cx="200" cy="200" r="185" fill="url(#glowGrad)"></circle>
-    <g id="pieces-group">${piecesSVG}</g>
-    <g id="labels-group">${labelsSVG}</g>
-  </svg>`;
-}
-
-function renderMoon(){
-  document.getElementById('moon-stage').innerHTML = buildMoonSVG();
-  document.querySelectorAll('.piece-path').forEach(p=>{
-    p.addEventListener('click', ()=> openPuzzle(parseInt(p.dataset.id)));
-  });
-  syncPieceVisuals();
-}
-function syncPieceVisuals(){
-  CONFIG.pieces.forEach(pc=>{
-    const el = document.getElementById('piece-'+pc.id);
-    const num = document.getElementById('num-'+pc.id);
-    if(!el) return;
-    if(state.unlocked.has(pc.id)){ el.classList.remove('locked'); el.classList.add('unlocked'); if(num) num.setAttribute('fill-opacity','0'); }
-    else { el.classList.add('locked'); el.classList.remove('unlocked'); if(num) num.setAttribute('fill-opacity','.55'); }
-  });
-  const core = document.querySelector('.moon-core-glow');
-  if(core) core.style.opacity = (0.15 + 0.55*(state.unlocked.size/TOTAL)).toString();
-}
-
-/* ---------------- chip rail ---------------------------------------------- */
-function renderRail(){
-  const rail = document.getElementById('piece-rail');
-  rail.innerHTML = CONFIG.pieces.map(pc=>{
-    const unlocked = state.unlocked.has(pc.id);
-    return `<button class="chip ${unlocked?'unlocked':''}" data-id="${pc.id}" aria-label="Mảnh ${pc.id}${unlocked?' đã mở':' chưa mở'}">${unlocked?'🌕':'🔒'}</button>`;
-  }).join("");
-  rail.querySelectorAll('.chip').forEach(ch=> ch.addEventListener('click', ()=> openPuzzle(parseInt(ch.dataset.id))));
-}
+/* ---------------- puzzle stage refs -------------------------------------- */
+const puzzleAreaEl = document.getElementById('puzzle-area');
+const targetMoonEl = document.getElementById('moon-target-stage');
+const screenHomeEl = document.getElementById('screen-home');
 
 function updateProgressUI(){
   const n = state.unlocked.size;
@@ -145,9 +62,9 @@ function updateProgressUI(){
   document.getElementById('bar-fill').style.width = (n/TOTAL*100) + "%";
 }
 
-/* ---------------- puzzle modal ------------------------------------------- */
+/* ---------------- puzzle modal (câu đố) ------------------------------------ */
 function openPuzzle(id){
-  if(state.unlocked.has(id)) return; // already solved
+  if(state.unlocked.has(id)) return;
   const pc = CONFIG.pieces.find(p=>p.id===id);
   state.activePieceId = id;
   state.selectedOptionIdx = null;
@@ -187,31 +104,31 @@ function checkAnswer(){
   }
 
   if(correct){
-    fb.textContent = "✨ Chính xác! Mảnh trăng đã sáng lên.";
+    fb.textContent = "✨ Chính xác! Mảnh trăng đang bay về vị trí...";
     fb.className = 'feedback correct';
     state.unlocked.add(pc.id);
     logEvent('piece_unlocked', { pieceId: pc.id, totalUnlocked: state.unlocked.size });
+    updateProgressUI();
     setTimeout(()=>{
       closePuzzle();
-      unlockPieceVisual(pc.id);
-    }, 550);
+      PuzzleStage.setState('PIECE_FLYING_HOME');
+      PuzzleStage.flyPieceHome(pc.id, targetMoonEl, ()=>{
+        PuzzleStage.setState('PIECE_LOCKED');
+        PuzzleStage.syncTargetVisuals(state.unlocked);
+        const tEl = document.getElementById('target-piece-'+pc.id);
+        if(tEl){ tEl.classList.add('pulse'); setTimeout(()=>tEl.classList.remove('pulse'), 900); }
+        burstSparkles();
+        if(state.unlocked.size === TOTAL){
+          PuzzleStage.setState('MOON_COMPLETED');
+          setTimeout(showCompletion, 700);
+        }
+      });
+    }, 520);
   } else {
     fb.textContent = "Chưa đúng, thử lại nhé!";
     fb.className = 'feedback wrong';
     const modal = document.querySelector('.modal');
     modal.classList.remove('shake'); void modal.offsetWidth; modal.classList.add('shake');
-  }
-}
-
-function unlockPieceVisual(id){
-  syncPieceVisuals();
-  renderRail();
-  updateProgressUI();
-  const el = document.getElementById('piece-'+id);
-  if(el){ el.classList.add('pulse'); setTimeout(()=>el.classList.remove('pulse'), 900); }
-  burstSparkles();
-  if(state.unlocked.size === TOTAL){
-    setTimeout(showCompletion, 900);
   }
 }
 
@@ -237,7 +154,7 @@ function burstSparkles(){
       if(frame<70) requestAnimationFrame(tick); else ctx.clearRect(0,0,canvas.width,canvas.height);
     }
     tick();
-  }catch(e){ /* sparkle burst is decorative only */ }
+  }catch(e){ }
 }
 function confettiFall(){
   try{
@@ -261,7 +178,7 @@ function confettiFall(){
       if(t<260) requestAnimationFrame(tick); else ctx.clearRect(0,0,canvas.width,canvas.height);
     }
     tick();
-  }catch(e){ /* confetti is decorative only */ }
+  }catch(e){ }
 }
 
 /* ---------------- screen navigation --------------------------------------- */
@@ -277,6 +194,41 @@ function showCompletion(){
   logEvent('campaign_completed', { rewardCode: CONFIG.reward.code });
 }
 
+/* ---------------- khởi động màn puzzle: đo layout thật rồi chạy intro ------ */
+function startJourney(){
+  showScreen('screen-home');
+  screenHomeEl.classList.add('prepping');
+
+  requestAnimationFrame(()=>{
+    targetMoonEl.innerHTML = PuzzleStage.buildTargetMoonSVG();
+    const targetRect = targetMoonEl.getBoundingClientRect();
+    PuzzleStage.setPxPerUnit(targetRect.width / GEO.SPACE);
+    const layout = PuzzleStage.computeScatterLayout(targetRect);
+    PuzzleStage.setLayout(layout);
+
+    PuzzleStage.playIntro(layout, targetMoonEl, ()=>{
+      PuzzleStage.renderScatteredPieces(puzzleAreaEl, state.unlocked, openPuzzle);
+      PuzzleStage.syncTargetVisuals(state.unlocked);
+      updateProgressUI();
+      screenHomeEl.classList.remove('prepping');
+    });
+  });
+}
+
+let resizeTimer;
+addEventListener('resize', ()=>{
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(()=>{
+    if(PuzzleStage.getState() !== 'PUZZLE_ACTIVE' || !targetMoonEl.firstChild) return;
+    const targetRect = targetMoonEl.getBoundingClientRect();
+    if(targetRect.width < 10) return;
+    PuzzleStage.setPxPerUnit(targetRect.width / GEO.SPACE);
+    const layout = PuzzleStage.computeScatterLayout(targetRect);
+    PuzzleStage.setLayout(layout);
+    PuzzleStage.renderScatteredPieces(puzzleAreaEl, state.unlocked, openPuzzle);
+  }, 250);
+});
+
 /* ---------------- events ---------------------------------------------------- */
 document.getElementById('login-form').addEventListener('submit', (e)=>{
   e.preventDefault();
@@ -287,10 +239,7 @@ document.getElementById('login-form').addEventListener('submit', (e)=>{
   state.employeeCode = code;
   document.getElementById('home-heading').textContent = `Chào bạn, ${code} 👋`;
   logEvent('login', {});
-  renderMoon();
-  renderRail();
-  updateProgressUI();
-  showScreen('screen-home');
+  startJourney();
 });
 document.getElementById('modal-close').addEventListener('click', closePuzzle);
 document.getElementById('modal-submit').addEventListener('click', checkAnswer);

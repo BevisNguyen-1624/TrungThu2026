@@ -9,6 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="css/moon-photo.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 </head>
 <body>
 <canvas id="stars"></canvas>
@@ -46,17 +47,18 @@
 
     <div class="home-title">
       <h2 id="home-heading">Chào bạn 👋</h2>
-      <p>Chạm vào một mảnh trăng để mở câu đố</p>
+      <p>Chạm vào một mảnh trăng bất kỳ để mở câu đố</p>
     </div>
 
-    <div class="moon-stage" id="moon-stage"><!-- SVG injected by app.js --></div>
+    <div class="puzzle-area" id="puzzle-area">
+      <div class="moon-target-stage" id="moon-target-stage"></div>
+    </div>
 
     <div class="progress-track">
       <div class="bar-bg"><div class="bar-fill" id="bar-fill"></div></div>
       <div class="progress-label"><span id="progress-text">0 / 10 mảnh</span><span>Còn <span id="pieces-left">10</span> mảnh</span></div>
     </div>
 
-    <div class="piece-rail" id="piece-rail"></div>
     <div class="footer-note">Hoàn thành cả 10 mảnh để mở khoá quà tặng đặc biệt 🎁</div>
   </section>
 
@@ -89,6 +91,9 @@
 
 <!-- Thứ tự nạp quan trọng: config.js phải nạp TRƯỚC app.js -->
 <script src="js/config.js"></script>
+<script src="js/moon-photo-data.js"></script>
+<script src="js/moon-geometry.js"></script>
+<script src="js/puzzle-stage.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>
