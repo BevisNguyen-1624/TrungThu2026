@@ -241,27 +241,31 @@ const PuzzleStage = (() => {
       .to({}, { duration: 0.28 }) // giữ yên ngắn để tạo cảm giác chuẩn bị
       .call(() => setState('MOON_CRACKING'))
       // Phase 2 — các vết nứt lan ra, lệch thời gian nhẹ, không đồng loạt
-      // + rung nhẹ tăng dần, như thể mặt trăng đang chịu áp lực trước khi vỡ
+      // + rung nhẹ suốt quá trình, tăng dần cường độ, DỪNG ĐÚNG LÚC nứt xong hết
       .to(crackGroup.children, {
         opacity: 1, duration: 0.32, ease: 'power1.out',
         stagger: { each: 0.07, from: 'random' }
       }, 'crack')
-      .fromTo(gShake, {
-        x: 0, y: 0
-      }, {
-        keyframes: [
-          { x: 0.6,  y: -0.5, duration: 0.05 },
-          { x: -0.8, y: 0.6,  duration: 0.05 },
-          { x: 0.9,  y: 0.4,  duration: 0.05 },
-          { x: -1.1, y: -0.7, duration: 0.05 },
-          { x: 1.3,  y: 0.8,  duration: 0.05 },
-          { x: -1.6, y: -0.9, duration: 0.05 },
-          { x: 1.8,  y: 1.0,  duration: 0.05 },
-          { x: 0,    y: 0,    duration: 0.05 }
-        ],
-        ease: 'none'
+      .add(() => {
+        // tổng thời gian các vết nứt hiện ra hết (đúng bằng thời lượng của tween ở trên)
+        const crackDuration = Math.max(0, (crackGroup.children.length - 1)) * 0.07 + 0.32;
+        const step = 0.05;
+        const steps = Math.max(2, Math.round(crackDuration / step));
+        const keyframes = [];
+        for (let i = 0; i < steps; i++) {
+          const t = i / (steps - 1);           // 0 -> 1 theo tiến trình rung
+          const amp = 0.5 + t * 1.8;            // cường độ tăng dần khi gần vỡ
+          const dir = i % 2 === 0 ? 1 : -1;
+          keyframes.push({
+            x: dir * amp * (0.7 + Math.random() * 0.6),
+            y: -dir * amp * (0.5 + Math.random() * 0.6),
+            duration: crackDuration / steps
+          });
+        }
+        keyframes.push({ x: 0, y: 0, duration: step }); // về lại đúng tâm trước khi vỡ
+        gsap.fromTo(gShake, { x: 0, y: 0 }, { keyframes, ease: 'none' });
       }, 'crack')
-      .to({}, { duration: 0.12 })
+      .to({}, { duration: 0.1 })
       .call(() => setState('MOON_SHATTERING'))
       // Phase 3 — vỡ thành 10 mảnh, mỗi mảnh bay theo hướng/tốc độ khác nhau
       .call(() => {
