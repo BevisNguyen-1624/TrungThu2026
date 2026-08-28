@@ -9,6 +9,8 @@
 const TOTAL = CONFIG.pieces.length;
 const state = {
   employeeCode: "",
+  employeeName: "",
+  employeeTitle: "",
   unlocked: new Set(),
   activePieceId: null,
   selectedOptionIdx: null
@@ -26,6 +28,26 @@ function logEvent(type, payload){
       body: JSON.stringify({ type, employeeCode: state.employeeCode, ts: new Date().toISOString(), ...payload })
     }).catch(()=>{});
   }catch(e){}
+}
+
+/* ---------------- kiểm tra mã nhân viên trong danh sách Google Sheet ----
+   Trả về Promise<{found, name, title}>. Nếu chưa cấu hình backend, hoặc
+   requireVerification=false, luôn coi như hợp lệ (found:true) để không chặn
+   demo/test khi chưa deploy Apps Script. Nếu request lỗi mạng, cũng cho qua
+   (found:true) kèm cảnh báo console, tránh chặn người chơi vì backend sập. */
+async function verifyEmployee(code){
+  if(!CONFIG.backend.appsScriptUrl || !CONFIG.backend.requireVerification){
+    return { found: true, name: "", title: "" };
+  }
+  try{
+    const url = CONFIG.backend.appsScriptUrl + "?action=lookup&code=" + encodeURIComponent(code);
+    const res = await fetch(url, { method: "GET" });
+    const data = await res.json();
+    return { found: !!data.found, name: data.name || "", title: data.title || "" };
+  }catch(e){
+    console.warn("Không thể kiểm tra mã nhân viên (lỗi mạng/backend), tạm thời cho qua:", e);
+    return { found: true, name: "", title: "" };
+  }
 }
 
 /* ---------------- starfield background ---------------------------------- */
@@ -230,16 +252,44 @@ addEventListener('resize', ()=>{
 });
 
 /* ---------------- events ---------------------------------------------------- */
-document.getElementById('login-form').addEventListener('submit', (e)=>{
+document.getElementById('login-form').addEventListener('submit', async (e)=>{
   e.preventDefault();
   const code = document.getElementById('employee-code').value.trim();
   const err = document.getElementById('login-err');
+  const btn = document.getElementById('login-submit-btn');
   if(!code){ err.textContent = "Vui lòng nhập mã nhân viên."; return; }
   err.textContent = "";
+
+  const oldLabel = btn.textContent;
+  btn.textContent = "Đang kiểm tra...";
+  btn.disabled = true;
+  const result = await verifyEmployee(code);
+  btn.textContent = oldLabel;
+  btn.disabled = false;
+
+  if(!result.found){
+    err.textContent = "Mã nhân viên không có trong danh sách tham gia. Vui lòng kiểm tra lại.";
+    return;
+  }
+
   state.employeeCode = code;
-  document.getElementById('home-heading').textContent = `Chào bạn, ${code} 👋`;
+  state.employeeName = result.name;
+  state.employeeTitle = result.title;
   logEvent('login', {});
+
+  document.getElementById('confirm-name').textContent = result.name || code;
+  document.getElementById('confirm-title').textContent = result.title || `Mã nhân viên: ${code}`;
+  document.getElementById('home-heading').textContent = `Chào bạn, ${result.name || code} 👋`;
+  showScreen('screen-confirm');
+});
+document.getElementById('confirm-start-btn').addEventListener('click', ()=>{
+  logEvent('journey_started', {});
   startJourney();
+});
+document.getElementById('confirm-back-btn').addEventListener('click', ()=>{
+  document.getElementById('employee-code').value = '';
+  document.getElementById('login-err').textContent = '';
+  showScreen('screen-login');
 });
 document.getElementById('modal-close').addEventListener('click', closePuzzle);
 document.getElementById('modal-submit').addEventListener('click', checkAnswer);

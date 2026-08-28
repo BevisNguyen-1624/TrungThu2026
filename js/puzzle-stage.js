@@ -249,7 +249,7 @@ const PuzzleStage = (() => {
         const keyframes = [];
         for (let i = 0; i < steps; i++) {
           const t = i / (steps - 1);           // 0 -> 1 theo tiến trình rung
-          const amp = 1 + t * 2.8;            // cường độ tăng dần khi gần vỡ
+          const amp = 1.4 + t * 4.6;            // cường độ tăng dần khi gần vỡ (rung mạnh hơn)
           const dir = i % 2 === 0 ? 1 : -1;
           keyframes.push({
             x: dir * amp * (0.7 + Math.random() * 0.6),

@@ -63,6 +63,8 @@ button{font-family:var(--font-body); cursor:pointer;}
 
 /* ---------- Login ---------- */
 #screen-login{align-items:center; justify-content:center; padding:32px 20px 48px; text-align:center;}
+#screen-confirm{align-items:center; justify-content:center; padding:32px 20px 48px; text-align:center;}
+#screen-confirm .login-sub{ color:var(--moon-gold); font-weight:600; }
 .login-moon{width:min(400px, 82vw); aspect-ratio:1/1; margin:0 auto 24px; position:relative; display:flex; align-items:center; justify-content:center;}
 .login-moon-halo{
   position:absolute; inset:14%; border-radius:50%;

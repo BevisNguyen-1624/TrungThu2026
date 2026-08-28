@@ -18,8 +18,16 @@ const CONFIG = {
   // Để log tiến trình vào Google Sheet: deploy một Google Apps Script Web App
   // (xem hướng dẫn + script mẫu trong file BACKEND-google-apps-script.gs.txt
   // đi kèm) rồi dán URL /exec vào đây.
+  // Để log tiến trình vào Google Sheet VÀ để kiểm tra mã nhân viên có trong
+  // danh sách nhân sự hay không: deploy một Google Apps Script Web App (xem
+  // hướng dẫn + script mẫu trong BACKEND-google-apps-script.md) rồi dán URL
+  // /exec vào đây. URL này dùng chung cho cả log (POST) và tra cứu (GET).
   backend: {
-    appsScriptUrl: "https://script.google.com/macros/s/AKfycby5nuugd-QX4XwyLeidEBHfEFWyalAvMeFAliL13_iSxs2SrTl70MHRqlmmB7VXvHSz/exec" // VD: "https://script.google.com/macros/s/XXXX/exec"
+    appsScriptUrl: "", // VD: "https://script.google.com/macros/s/XXXX/exec"
+    // true: bắt buộc mã nhân viên phải có trong Google Sheet mới được chơi.
+    // Nếu appsScriptUrl để trống, hệ thống tự bỏ qua bước kiểm tra này (để
+    // tiện demo/test khi chưa deploy backend) — không cần đổi giá trị này.
+    requireVerification: true
   },
 
   // Danh sách mảnh ghép / câu đố. Có thể thêm/bớt phần tử để đổi số lượng
