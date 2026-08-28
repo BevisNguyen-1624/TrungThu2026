@@ -39,14 +39,19 @@ async function verifyEmployee(code){
   if(!CONFIG.backend.appsScriptUrl || !CONFIG.backend.requireVerification){
     return { found: true, name: "", title: "" };
   }
+  const TIMEOUT_MS = 6000; // Apps Script có thể chậm lúc "cold start"; giới hạn để không bắt chờ vô thời hạn
+  const controller = new AbortController();
+  const timer = setTimeout(()=> controller.abort(), TIMEOUT_MS);
   try{
     const url = CONFIG.backend.appsScriptUrl + "?action=lookup&code=" + encodeURIComponent(code);
-    const res = await fetch(url, { method: "GET" });
+    const res = await fetch(url, { method: "GET", signal: controller.signal });
     const data = await res.json();
     return { found: !!data.found, name: data.name || "", title: data.title || "" };
   }catch(e){
-    console.warn("Không thể kiểm tra mã nhân viên (lỗi mạng/backend), tạm thời cho qua:", e);
+    console.warn("Không thể kiểm tra mã nhân viên (lỗi mạng/backend hoặc quá thời gian chờ), tạm thời cho qua:", e);
     return { found: true, name: "", title: "" };
+  }finally{
+    clearTimeout(timer);
   }
 }
 
@@ -261,10 +266,12 @@ document.getElementById('login-form').addEventListener('submit', async (e)=>{
   err.textContent = "";
 
   const oldLabel = btn.textContent;
-  btn.textContent = "Đang kiểm tra...";
+  btn.innerHTML = '<span class="btn-spinner"></span> Đang kiểm tra...';
+  btn.classList.add('loading');
   btn.disabled = true;
   const result = await verifyEmployee(code);
   btn.textContent = oldLabel;
+  btn.classList.remove('loading');
   btn.disabled = false;
 
   if(!result.found){
