@@ -19,7 +19,7 @@ const CONFIG = {
   // (xem hướng dẫn + script mẫu trong file BACKEND-google-apps-script.gs.txt
   // đi kèm) rồi dán URL /exec vào đây.
   backend: {
-    appsScriptUrl: "" // VD: "https://script.google.com/macros/s/XXXX/exec"
+    appsScriptUrl: "https://script.google.com/macros/s/AKfycby5nuugd-QX4XwyLeidEBHfEFWyalAvMeFAliL13_iSxs2SrTl70MHRqlmmB7VXvHSz/exec" // VD: "https://script.google.com/macros/s/XXXX/exec"
   },
 
   // Danh sách mảnh ghép / câu đố. Có thể thêm/bớt phần tử để đổi số lượng
