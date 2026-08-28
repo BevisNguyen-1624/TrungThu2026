@@ -288,15 +288,19 @@ const PuzzleStage = (() => {
           });
         });
       })
-      .to({}, { duration: 1.15 }) // chờ gần hết các mảnh bay xong
-      // Flash toàn màn hình che khoảnh khắc chuyển sang màn puzzle thật
-      .to(flash, { opacity: 1, duration: 0.5, ease: 'power1.in' })
+      // Flash bắt đầu che NGAY khi các mảnh còn đang bay dở (không chờ chúng
+      // dừng hẳn) — nhờ vậy không có khung hình "đứng yên" nào bị lộ ra cả
+      .to(flash, { opacity: 1, duration: 0.4, ease: 'power1.in' }, '<+=0.45')
       .call(() => {
-        // đúng lúc màn hình trắng loá che khuất mọi thứ: hiện màn puzzle thật phía sau
+        // đúng lúc màn hình trắng loá che khuất mọi thứ: dọn sạch cảnh vỡ trăng
+        // (SVG + nền tối của overlay) NGAY LẬP TỨC rồi mới hiện màn puzzle thật —
+        // để khi flash mờ dần, cái lộ ra là puzzle thật chứ không phải cảnh cũ
         setState('PUZZLE_ACTIVE');
+        svg.remove();
+        overlay.style.background = 'transparent';
         onDone && onDone();
       })
-      .to(flash, { opacity: 0, duration: 0.5, ease: 'power2.out' })
+      .to(flash, { opacity: 0, duration: 0.45, ease: 'power2.out' })
       .call(() => overlay.remove());
 
     return tl;
