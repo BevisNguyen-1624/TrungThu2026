@@ -36,15 +36,15 @@ const CONFIG = {
   // type: "short" -> nhập đáp án ngắn, answer là MẢNG các đáp án chấp nhận (không phân biệt hoa/thường)
   pieces: 
     [
-  { id:1, type:"short", prompt:"Tại YODY, ấn phẩm truyền thông được đăng tải mỗi thứ 2 hằng tuần giúp nhân sự cập nhật những thông tin đáng chú ý trong tuần vừa qua có tên là gì?", answer:["News","YODY News"] },
-  { id:2, type:"short", prompt:"Trong bánh chưng truyền thống của người Việt, loại lá nào thường được dùng phổ biến nhất để gói bánh?", answer:["Lá dong"] },
-  { id:3, type:"short", prompt:"Chất khí nào chiếm tỉ lệ phần trăm thể tích lớn nhất trong không khí Trái Đất (khoảng 78%)?", answer:["Khí Nitơ (N2)","Khí Nitơ","Nitơ","N2"] },
-  { id:4, type:"short", prompt:"YODY Buôn Ma Thuột - Showroom lớn nhất Tây Nguyên với diện tích 3200m2 được khai trương vào năm nào?", answer:["Năm 2021","2021"] },
-  { id:5, type:"short", prompt:"Chiến dịch 'Bức tường lông ngỗng' được ra đời vào thời điểm nào? Và năm đó được gọi với tên chủ đề là gì?", answer:["Tháng 4/2022"] },
-  { id:6, type:"short", prompt:"YODY thay đổi màu logo từ đen trắng sang xanh vàng vào năm 2020. Vậy cửa hàng YODY đầu tiên khai trương với nhận diện mới là cửa hàng nào?", answer:["YODY Lê Chân"] },
-  { id:7, type:"short", prompt:"Nếu 5 chiếc máy may riêng biệt tại xưởng dệt may mất đúng 5 phút để hoàn thành 5 chiếc áo Polo, thì 100 chiếc máy may cùng năng suất sẽ mất bao lâu để may xong 100 chiếc áo Polo?", answer:["5 phút"] },
-  { id:8, type:"short", prompt:"Di sản thiên nhiên thế giới đầu tiên của Việt Nam được UNESCO công nhận (năm 1994) là địa danh nào?", answer:["Vịnh Hạ Long"] },
-  { id:9, type:"short", prompt:"Dòng sông nào dài nhất thế giới theo ghi nhận phổ biến của địa lý học truyền thống?", answer:["Sông Nile (Sông Niên)","Sông Nile","Sông Niên"] },
-  { id:10, type:"short", prompt:"Hành tinh nào trong Hệ Mặt Trời có thời gian tự quay một vòng quanh trục lâu hơn thời gian nó quay quanh Mặt Trời?", answer:["Sao Kim (Venus)","Sao Kim","Venus"] }
+  { id:1, type:"mcq", prompt:"Tết Trung Thu diễn ra vào ngày nào theo lịch âm?", options:["Rằm tháng 7","Rằm tháng 8","Mùng 1 tháng 8","Rằm tháng 10"], answer:1 },
+  { id:2, type:"short", prompt:"Điền từ còn thiếu: 'Tết Trung Thu còn được gọi là Tết Đoàn _____.'", answer:["viên"] },
+  { id:3, type:"mcq", prompt:"Hai loại bánh truyền thống không thể thiếu trong dịp Trung Thu là gì?", options:["Bánh chưng & Bánh giầy","Bánh dẻo & Bánh nướng","Bánh xèo & Bánh khọt","Bánh giò & Bánh tét"], answer:1 },
+  { id:4, type:"mcq", prompt:"Theo truyền thuyết dân gian Việt Nam, ai là người sống trên Cung Trăng cùng chú Cuội?", options:["Thỏ Ngọc","Chị Hằng","Mẫu Cửu Trùng Thiên","Tây Vương Mẫu"], answer:1 },
+  { id:5, type:"short", prompt:"Loại đèn truyền thống làm bằng giấy kiếng hình ngôi sao 5 cánh rất phổ biến dịp Trung Thu gọi là gì?", answer:["Đèn ông sao","Đèn sao"] },
+  { id:6, type:"mcq", prompt:"Mây che trăng đêm Trung Thu thường được dân gian dự đoán điều gì cho năm sau?", options:["Mất mùa","Bội thu / Mùa màng bội thu","Hạn hán","Bão lớn"], answer:1 },
+  { id:7, type:"mcq", prompt:"Hình ảnh con vật nào thường xuất hiện trong điệu múa sôi động vào đêm hội Trung Thu?", options:["Con Mèo","Con Lân","Con Ngựa","Con Phượng"], answer:1 },
+  { id:8, type:"short", prompt:"Trái cây đặc trưng màu đỏ/màu xanh, vỏ dày, cúng rằm Trung Thu thường được tỉa thành hình con chó xù tên là quả gì?", answer:["Quả bưởi","Trái bưởi","Bưởi"] },
+  { id:9, type:"mcq", prompt:"Mâm cỗ Trung Thu truyền thống thường gồm những gì?", options:["Bánh, ngũ quả và đèn lồng","Bánh chưng, dưa hành","Hoa đào, bánh tét","Trái cây mùa hè, hoa cúc"], answer:0 },
+  { id:10, type:"mcq", prompt:"Đồ chơi dân gian Trung Thu làm bằng bột gạo nhuộm màu, nặn thành các hình thù đáng yêu gọi là gì?", answer:["Tè he","Tò he","Búp bê bột","Đồ chơi đất nặn"], answer:1 }
 ]
 };
