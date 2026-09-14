@@ -11,8 +11,8 @@ const CONFIG = {
 
   // Phần thưởng hiển thị khi người chơi hoàn thành đủ số mảnh
   reward: {
-    code: "YODY-MOON-2026",
-    note: "Đưa mã này cho ban tổ chức tại quầy sự kiện để nhận quà nhé."
+    code: "QUÁ XUẤT SẮC ĐI THUIIIIII!!!!!",
+    note: "CHÚC MỪNG BẠN ĐÃ THÀNH CÔNG HÓA PHÉP CUNG TRĂNGGG"
   },
 
   // Để log tiến trình vào Google Sheet: deploy một Google Apps Script Web App
