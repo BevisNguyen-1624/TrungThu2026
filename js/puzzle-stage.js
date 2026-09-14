@@ -250,7 +250,7 @@ const PuzzleStage = (() => {
           gsap.to(children[childIdx], {
             opacity: 1, duration: 0.55, ease: 'power1.out',
             delay: orderPos * 0.22,
-            onStart: () => AudioEngine.playCrackTick()
+            onStart: ()
           });
         });
       }, 'crack')
