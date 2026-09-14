@@ -248,15 +248,15 @@ const PuzzleStage = (() => {
         const order = children.map((_, i) => i).sort(() => Math.random() - 0.5);
         order.forEach((childIdx, orderPos) => {
           gsap.to(children[childIdx], {
-            opacity: 1, duration: 0.32, ease: 'power1.out',
-            delay: orderPos * 0.07,
+            opacity: 1, duration: 0.55, ease: 'power1.out',
+            delay: orderPos * 0.22,
             onStart: () => AudioEngine.playCrackTick()
           });
         });
       }, 'crack')
       .add(() => {
         // tổng thời gian các vết nứt hiện ra hết (đúng bằng lịch trình ở trên)
-        const crackDuration = Math.max(0, (crackGroup.children.length - 1)) * 0.07 + 0.32;
+        const crackDuration = Math.max(0, (crackGroup.children.length - 1)) * 0.22 + 0.55;
         const step = 0.05;
         const steps = Math.max(2, Math.round(crackDuration / step));
         const keyframes = [];
@@ -273,7 +273,7 @@ const PuzzleStage = (() => {
         keyframes.push({ x: 0, y: 0, duration: step }); // về lại đúng tâm trước khi vỡ
         gsap.fromTo(gShake, { x: 0, y: 0 }, { keyframes, ease: 'none' });
       }, 'crack')
-      .to({}, { duration: 0.1 })
+      .to({}, { duration: 0.4 })
       .call(() => { setState('MOON_SHATTERING'); AudioEngine.playShatterBoom(); })
       // Phase 3 — vỡ thành 10 mảnh, mỗi mảnh bay theo hướng/tốc độ khác nhau
       .call(() => {
