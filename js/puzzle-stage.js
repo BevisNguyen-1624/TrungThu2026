@@ -256,7 +256,7 @@ const PuzzleStage = (() => {
       }, 'crack')
       .add(() => {
         // tổng thời gian các vết nứt hiện ra hết (đúng bằng lịch trình ở trên)
-        const crackDuration = Math.max(0, (crackGroup.children.length - 1)) * 0.22 + 0.55;
+        const crackDuration = Math.max(0, (crackGroup.children.length - 1)) * 0.22 + 2;
         const step = 0.05;
         const steps = Math.max(2, Math.round(crackDuration / step));
         const keyframes = [];
