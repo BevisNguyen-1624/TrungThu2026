@@ -134,7 +134,7 @@ function checkAnswer(){
     fb.textContent = "✨ Chính xác! Mảnh trăng đang bay về vị trí...";
     fb.className = 'feedback correct';
     state.unlocked.add(pc.id);
-    logEvent('piece_unlocked', { pieceId: pc.id, totalUnlocked: state.unlocked.size });
+    logEvent('piece_unlocked', { pieceId: pc.id, totalUnlocked: state.unlocked.size, elapsedSeconds: Math.round(currentElapsedSeconds()) });
     updateProgressUI();
     setTimeout(()=>{
       closePuzzle();
@@ -213,12 +213,53 @@ function showScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
+/* ---------------- đếm giờ chơi & tính điểm ------------------------------- */
+let timerInterval = null;
+let playStartTime = null;
+let finalElapsedSeconds = 0;
+
+function formatTime(totalSeconds){
+  const m = Math.floor(totalSeconds/60).toString().padStart(2,'0');
+  const s = Math.floor(totalSeconds%60).toString().padStart(2,'0');
+  return `${m}:${s}`;
+}
+function currentElapsedSeconds(){
+  if(!playStartTime) return 0;
+  return (Date.now() - playStartTime)/1000;
+}
+function startTimer(){
+  playStartTime = Date.now();
+  const el = document.getElementById('timer-text');
+  clearInterval(timerInterval);
+  timerInterval = setInterval(()=>{
+    el.textContent = formatTime(currentElapsedSeconds());
+  }, 1000);
+}
+function stopTimer(){
+  clearInterval(timerInterval);
+  finalElapsedSeconds = currentElapsedSeconds();
+  return finalElapsedSeconds;
+}
+function calculateScore(seconds){
+  const { baseScore, penaltyPerSecond, minScore } = CONFIG.scoring;
+  return Math.max(minScore, Math.round(baseScore - seconds * penaltyPerSecond));
+}
+
 function showCompletion(){
+  const seconds = stopTimer();
+  const score = calculateScore(seconds);
   document.getElementById('reward-code').textContent = CONFIG.reward.code;
   document.querySelector('.reward-note').textContent = CONFIG.reward.note;
+  document.getElementById('final-time').textContent = formatTime(seconds);
+  document.getElementById('final-score').textContent = score.toLocaleString('vi-VN');
   showScreen('screen-complete');
   confettiFall();
-  logEvent('campaign_completed', { rewardCode: CONFIG.reward.code });
+  AudioEngine.stopBgm(1500);
+  logEvent('campaign_completed', {
+    rewardCode: CONFIG.reward.code,
+    elapsedSeconds: Math.round(seconds),
+    score
+  });
 }
 
 /* ---------------- khởi động màn puzzle: đo layout thật rồi chạy intro ------ */
@@ -238,6 +279,7 @@ function startJourney(){
       PuzzleStage.syncTargetVisuals(state.unlocked);
       updateProgressUI();
       screenHomeEl.classList.remove('prepping');
+      startTimer(); // đếm giờ bắt đầu tính TỪ LÚC puzzle thật sự tương tác được
     });
   });
 }
@@ -291,12 +333,21 @@ document.getElementById('login-form').addEventListener('submit', async (e)=>{
 });
 document.getElementById('confirm-start-btn').addEventListener('click', ()=>{
   logEvent('journey_started', {});
+  AudioEngine.unlock();     // mở khoá audio context ngay trong cử chỉ bấm của người dùng
+  AudioEngine.startBgm();   // nhạc nền Trung thu bắt đầu, chạy xuyên suốt phần giải đố
   startJourney();
 });
 document.getElementById('confirm-back-btn').addEventListener('click', ()=>{
   document.getElementById('employee-code').value = '';
   document.getElementById('login-err').textContent = '';
   showScreen('screen-login');
+});
+document.getElementById('sound-toggle').addEventListener('click', ()=>{
+  const muted = AudioEngine.toggleMute();
+  const btn = document.getElementById('sound-toggle');
+  btn.textContent = muted ? '🔇' : '🔊';
+  btn.classList.toggle('muted', muted);
+  btn.setAttribute('aria-pressed', String(muted));
 });
 document.getElementById('modal-close').addEventListener('click', closePuzzle);
 document.getElementById('modal-submit').addEventListener('click', checkAnswer);

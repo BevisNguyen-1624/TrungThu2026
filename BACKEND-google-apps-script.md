@@ -58,7 +58,8 @@ function doPost(e) {
   var data = JSON.parse(e.postData.contents);
   sheet.appendRow([
     data.ts, data.type, data.employeeCode, data.pieceId || "",
-    data.totalUnlocked || "", data.rewardCode || ""
+    data.totalUnlocked || "", data.rewardCode || "",
+    data.elapsedSeconds || "", data.score || ""
   ]);
   return jsonOut({ ok: true });
 }
@@ -71,7 +72,9 @@ function jsonOut(obj) {
 
 ## Ghi chú
 
-- Sheet "Log" sẽ có các cột: `ts | type | employeeCode | pieceId | totalUnlocked | rewardCode`.
+- Sheet "Log" sẽ có các cột: `ts | type | employeeCode | pieceId | totalUnlocked | rewardCode | elapsedSeconds | score`.
+  Dòng `type = "campaign_completed"` là dòng chứa thời gian hoàn thành cuối
+  cùng và điểm số — dùng dòng này để làm bảng xếp hạng (leaderboard) nếu cần.
 - Nếu để trống `appsScriptUrl` trong `config.js`, minigame **bỏ qua bước kiểm
   tra nhân sự** (ai điền mã gì cũng qua được màn xác nhận) — tiện để demo/test
   nhanh khi chưa deploy backend. Khi triển khai thật, nhớ dán URL vào để bật

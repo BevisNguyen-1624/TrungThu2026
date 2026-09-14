@@ -57,12 +57,16 @@
   <section id="screen-home" class="screen">
     <div class="brandbar" style="width:100%; max-width:460px;">
       <div class="brandmark"><span class="dot"></span>YODY MOONFEST</div>
-      <div class="progress-pill">🌙 <span id="pill-count">0/10</span></div>
+      <div class="brandbar-right">
+        <div class="progress-pill">🌙 <span id="pill-count">0/10</span></div>
+        <button type="button" id="sound-toggle" class="sound-toggle" aria-label="Bật/tắt âm thanh" aria-pressed="false">🔊</button>
+      </div>
     </div>
 
     <div class="home-title">
       <h2 id="home-heading">Chào bạn 👋</h2>
       <p>Chạm vào một mảnh trăng bất kỳ để mở câu đố</p>
+      <div class="timer-chip" id="timer-chip">⏱ <span id="timer-text">00:00</span></div>
     </div>
 
     <div class="puzzle-area" id="puzzle-area">
@@ -82,6 +86,10 @@
     <div class="full-moon"><div class="disc"></div></div>
     <h2 class="complete-title">🌕 Chúc mừng!</h2>
     <p class="complete-sub">Bạn đã ghép lại trọn vẹn vầng trăng Trung thu YODY. Mỗi mảnh ghép là một phần câu chuyện — khi trăng tròn, đó cũng là lúc đại gia đình YODY đoàn viên.</p>
+    <div class="stats-row">
+      <div class="stat"><span class="stat-label">Thời gian</span><span class="stat-value" id="final-time">00:00</span></div>
+      <div class="stat"><span class="stat-label">Điểm số</span><span class="stat-value" id="final-score">0</span></div>
+    </div>
     <div class="reward-box">
       <div class="label">Mã quà tặng của bạn</div>
       <div class="code" id="reward-code">YODY-MOON-2026</div>
@@ -108,6 +116,7 @@
 <script src="js/config.js"></script>
 <script src="js/moon-photo-data.js"></script>
 <script src="js/moon-geometry.js"></script>
+<script src="js/audio.js"></script>
 <script src="js/puzzle-stage.js"></script>
 <script src="js/app.js"></script>
 </body>

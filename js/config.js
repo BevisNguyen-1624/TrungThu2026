@@ -23,28 +23,45 @@ const CONFIG = {
   // hướng dẫn + script mẫu trong BACKEND-google-apps-script.md) rồi dán URL
   // /exec vào đây. URL này dùng chung cho cả log (POST) và tra cứu (GET).
   backend: {
-    appsScriptUrl: "https://script.google.com/macros/s/AKfycby5nuugd-QX4XwyLeidEBHfEFWyalAvMeFAliL13_iSxs2SrTl70MHRqlmmB7VXvHSz/exec", // VD: "https://script.google.com/macros/s/XXXX/exec"
+    appsScriptUrl: "", // VD: "https://script.google.com/macros/s/XXXX/exec"
     // true: bắt buộc mã nhân viên phải có trong Google Sheet mới được chơi.
     // Nếu appsScriptUrl để trống, hệ thống tự bỏ qua bước kiểm tra này (để
     // tiện demo/test khi chưa deploy backend) — không cần đổi giá trị này.
     requireVerification: true
   },
 
+  // Tính điểm dựa trên thời gian hoàn thành (giây), tính từ lúc bắt đầu vào
+  // màn puzzle (KHÔNG tính thời gian xem hoạt ảnh trăng vỡ) đến lúc mở khoá
+  // xong 10/10 mảnh. Công thức: điểm = baseScore - (số giây) x penaltyPerSecond,
+  // không thấp hơn minScore. Chỉnh 3 số này để đổi độ khó ghi điểm.
+  scoring: {
+    baseScore: 1000,
+    penaltyPerSecond: 3,
+    minScore: 100
+  },
+
   // Danh sách mảnh ghép / câu đố. Có thể thêm/bớt phần tử để đổi số lượng
   // mảnh (đề xuất 8-12 mảnh cho trải nghiệm 5-10 phút).
   // type: "mcq"   -> trắc nghiệm, answer là INDEX (0-based) của đáp án đúng trong options
   // type: "short" -> nhập đáp án ngắn, answer là MẢNG các đáp án chấp nhận (không phân biệt hoa/thường)
-  pieces: 
-    [
-  { id:1, type:"mcq", prompt:"Tết Trung Thu diễn ra vào ngày nào theo lịch âm?", options:["Rằm tháng 7","Rằm tháng 8","Mùng 1 tháng 8","Rằm tháng 10"], answer:1 },
-  { id:2, type:"short", prompt:"Điền từ còn thiếu: 'Tết Trung Thu còn được gọi là Tết Đoàn _____.'", answer:["viên"] },
-  { id:3, type:"mcq", prompt:"Hai loại bánh truyền thống không thể thiếu trong dịp Trung Thu là gì?", options:["Bánh chưng & Bánh giầy","Bánh dẻo & Bánh nướng","Bánh xèo & Bánh khọt","Bánh giò & Bánh tét"], answer:1 },
-  { id:4, type:"mcq", prompt:"Theo truyền thuyết dân gian Việt Nam, ai là người sống trên Cung Trăng cùng chú Cuội?", options:["Thỏ Ngọc","Chị Hằng","Mẫu Cửu Trùng Thiên","Tây Vương Mẫu"], answer:1 },
-  { id:5, type:"short", prompt:"Loại đèn truyền thống làm bằng giấy kiếng hình ngôi sao 5 cánh rất phổ biến dịp Trung Thu gọi là gì?", answer:["Đèn ông sao","Đèn sao"] },
-  { id:6, type:"mcq", prompt:"Mây che trăng đêm Trung Thu thường được dân gian dự đoán điều gì cho năm sau?", options:["Mất mùa","Bội thu / Mùa màng bội thu","Hạn hán","Bão lớn"], answer:1 },
-  { id:7, type:"mcq", prompt:"Hình ảnh con vật nào thường xuất hiện trong điệu múa sôi động vào đêm hội Trung Thu?", options:["Con Mèo","Con Lân","Con Ngựa","Con Phượng"], answer:1 },
-  { id:8, type:"short", prompt:"Trái cây đặc trưng màu đỏ/màu xanh, vỏ dày, cúng rằm Trung Thu thường được tỉa thành hình con chó xù tên là quả gì?", answer:["Quả bưởi","Trái bưởi","Bưởi"] },
-  { id:9, type:"mcq", prompt:"Mâm cỗ Trung Thu truyền thống thường gồm những gì?", options:["Bánh, ngũ quả và đèn lồng","Bánh chưng, dưa hành","Hoa đào, bánh tét","Trái cây mùa hè, hoa cúc"], answer:0 },
-  { id:10, type:"mcq", prompt:"Đồ chơi dân gian Trung Thu làm bằng bột gạo nhuộm màu, nặn thành các hình thù đáng yêu gọi là gì?", answer:["Tè he","Tò he","Búp bê bột","Đồ chơi đất nặn"], answer:1 }
-]
+  pieces: [
+    { id:1, type:"mcq", prompt:"Trung thu là ngày lễ diễn ra vào ngày nào theo âm lịch?",
+      options:["Rằm tháng 7","Rằm tháng 8","Mùng 1 tháng 9","Rằm tháng 10"], answer:1 },
+    { id:2, type:"mcq", prompt:"Đâu là một trong những giá trị cốt lõi thường gắn với văn hoá YODY?",
+      options:["Tận tâm với khách hàng","Chậm mà chắc, không cần đổi mới","Làm việc một mình","Giữ bí mật nội bộ tuyệt đối"], answer:0 },
+    { id:3, type:"short", prompt:"Điền từ còn thiếu: 'Đoàn ___ là tinh thần của ngày Tết Trung thu.'", answer:["viên","đoàn viên"] },
+    { id:4, type:"mcq", prompt:"Chiếc bánh không thể thiếu trong dịp Trung thu là gì?",
+      options:["Bánh chưng","Bánh trung thu","Bánh mì","Bánh xèo"], answer:1 },
+    { id:5, type:"mcq", prompt:"Con vật nào thường xuất hiện cùng chị Hằng trong truyện cổ tích Trung thu?",
+      options:["Thỏ ngọc","Rồng vàng","Sư tử","Hạc trắng"], answer:0 },
+    { id:6, type:"mcq", prompt:"Hoạt động nào sau đây gắn liền với đêm hội Trung thu?",
+      options:["Rước đèn, phá cỗ","Đua thuyền","Thả diều mùa hè","Đón giao thừa"], answer:0 },
+    { id:7, type:"short", prompt:"YODY là thương hiệu thời trang của Việt Nam — hãy điền chữ còn thiếu: 'Y_DY'.", answer:["O","o"] },
+    { id:8, type:"mcq", prompt:"Điều gì thể hiện tinh thần 'đồng đội' trong công việc tại YODY?",
+      options:["Giúp đỡ, hỗ trợ đồng nghiệp khi cần","Làm xong việc của mình là đủ","Cạnh tranh nội bộ gay gắt","Không chia sẻ thông tin"], answer:0 },
+    { id:9, type:"mcq", prompt:"Chiếc đèn truyền thống trẻ em hay rước trong đêm Trung thu gọi là gì?",
+      options:["Đèn ông sao","Đèn dầu","Đèn pin","Đèn led"], answer:0 },
+    { id:10, type:"mcq", prompt:"Khi ghép đủ tất cả các mảnh, vầng trăng YODY tượng trưng cho điều gì?",
+      options:["Sự chia cắt","Sự đoàn viên, gắn kết","Sự cạnh tranh","Sự nghỉ ngơi"], answer:1 }
+  ]
 };

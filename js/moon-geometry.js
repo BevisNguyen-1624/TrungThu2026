@@ -139,19 +139,42 @@ function jitterPolygon(poly, R, cx, cy){
   return { poly: out, crackEdges };
 }
 
+function polygonPerimeter(pts){
+  let p = 0;
+  for(let i=0;i<pts.length;i++){
+    const a = pts[i], b = pts[(i+1)%pts.length];
+    p += Math.hypot(b.x-a.x, b.y-a.y);
+  }
+  return p;
+}
+// Chỉ số "gọn" của 1 đa giác: 1.0 xấp xỉ hình tròn, càng cao càng dài/mỏng.
+// Dùng để loại các mảnh dạng "lưỡi liềm" siêu mỏng, rất khó bấm trúng.
+function compactnessPenalty(pts){
+  const area = polygonArea(pts);
+  if(area < 1e-6) return 999;
+  const perim = polygonPerimeter(pts);
+  return (perim*perim) / (4*Math.PI*area);
+}
+
 function buildShardGeometry(total){
   const CX = 200, CY = 200, R = 168;
   const boundaryCircle = circlePoly(CX, CY, R);
+  // Lệch ngẫu nhiên theo phiên để mỗi lần tải trang có hình dạng vỡ khác nhau
+  // (nếu không, mọi người chơi sẽ luôn thấy cùng 1 kiểu vết nứt y hệt nhau).
+  const sessionOffset = Math.floor(Math.random() * 100000);
 
   let best = null;
   for(let s = 1; s <= 60; s++){
-    const rng = mulberry32(s * 977 + 13);
+    const rng = mulberry32((s + sessionOffset) * 977 + 13);
     const seeds = generateSeeds(total, CX, CY, R, rng);
     const cells = seeds.map(seed => voronoiCell(seed, seeds, boundaryCircle));
     const areas = cells.map(polygonArea);
     const avg = areas.reduce((a,b)=>a+b,0) / areas.length;
-    const variance = areas.reduce((s,a)=>s + Math.pow(a-avg,2), 0) / areas.length;
-    if(!best || variance < best.variance) best = { cells, areas, variance, seeds, seedNum: s };
+    const areaVarianceNorm = (areas.reduce((s,a)=>s + Math.pow(a-avg,2), 0) / areas.length) / (avg*avg);
+    const maxCompactness = Math.max(...cells.map(compactnessPenalty));
+    // Kết hợp: ưu tiên diện tích cân bằng NHƯNG phạt nặng nếu có mảnh quá mỏng/dài
+    const score = areaVarianceNorm + maxCompactness * 0.12;
+    if(!best || score < best.score) best = { cells, areas, score, seeds, seedNum: s };
   }
 
   const allCrackEdges = [];

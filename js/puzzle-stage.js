@@ -107,10 +107,12 @@ const PuzzleStage = (() => {
   function renderScatteredPieces(container, unlockedSet, onClick){
     container.querySelectorAll('.loose-piece').forEach(n => n.remove());
     pieceEls = {};
+    const MIN_HITBOX = 46; // đảm bảo vùng bấm tối thiểu (mảnh mỏng/dẹt vẫn dễ bấm trúng)
     GEO.pieces.forEach(piece => {
       if (unlockedSet.has(piece.id)) return; // đã bay về nhà, không hiển thị rời nữa
       const pos = layout.find(l => l.id === piece.id);
-      const wPx = piece.bbox.w * PX_PER_UNIT, hPx = piece.bbox.h * PX_PER_UNIT;
+      const shapeW = piece.bbox.w * PX_PER_UNIT, shapeH = piece.bbox.h * PX_PER_UNIT;
+      const wPx = Math.max(shapeW, MIN_HITBOX), hPx = Math.max(shapeH, MIN_HITBOX);
 
       const wrap = document.createElement('div');
       wrap.className = 'loose-piece';
@@ -123,7 +125,9 @@ const PuzzleStage = (() => {
       wrap.setAttribute('role', 'button');
       wrap.setAttribute('tabindex', '0');
       wrap.setAttribute('aria-label', 'Mảnh trăng ' + piece.id);
-      wrap.innerHTML = `<svg viewBox="${pieceViewBox(piece)}" width="100%" height="100%" overflow="visible">
+      // SVG giữ đúng kích thước/tỉ lệ thật của mảnh, được canh giữa trong vùng
+      // bấm (có thể lớn hơn) để không bị kéo méo hình dạng.
+      wrap.innerHTML = `<svg viewBox="${pieceViewBox(piece)}" width="${shapeW}" height="${shapeH}" overflow="visible" style="pointer-events:none;">
         <path class="loose-piece-path" d="${piece.d}"></path>
       </svg>`;
       wrap.addEventListener('click', () => onClick(piece.id));
@@ -155,7 +159,8 @@ const PuzzleStage = (() => {
         duration: 0.85, ease: 'power2.inOut',
         x: targetX - curX, y: targetY - curY,
         rotation: 0, scale: 0.94,
-        filter: 'drop-shadow(0 0 18px rgba(230,232,238,.9))'
+        filter: 'drop-shadow(0 0 18px rgba(230,232,238,.9))',
+        onComplete: () => AudioEngine.playChime()
       })
       .to(el, { duration: 0.22, scale: 1.05, ease: 'power1.out' })
       .to(el, { duration: 0.22, scale: 1, ease: 'power1.in', filter: 'drop-shadow(0 0 0 rgba(230,232,238,0))' });
@@ -237,12 +242,20 @@ const PuzzleStage = (() => {
       .call(() => setState('MOON_CRACKING'))
       // Phase 2 — các vết nứt lan ra, lệch thời gian nhẹ, không đồng loạt
       // + rung nhẹ suốt quá trình, tăng dần cường độ, DỪNG ĐÚNG LÚC nứt xong hết
-      .to(crackGroup.children, {
-        opacity: 1, duration: 0.32, ease: 'power1.out',
-        stagger: { each: 0.07, from: 'random' }
+      // + mỗi vết nứt hiện ra kèm 1 tiếng "tách" đồng bộ
+      .add(() => {
+        const children = Array.from(crackGroup.children);
+        const order = children.map((_, i) => i).sort(() => Math.random() - 0.5);
+        order.forEach((childIdx, orderPos) => {
+          gsap.to(children[childIdx], {
+            opacity: 1, duration: 0.32, ease: 'power1.out',
+            delay: orderPos * 0.07,
+            onStart: () => AudioEngine.playCrackTick()
+          });
+        });
       }, 'crack')
       .add(() => {
-        // tổng thời gian các vết nứt hiện ra hết (đúng bằng thời lượng của tween ở trên)
+        // tổng thời gian các vết nứt hiện ra hết (đúng bằng lịch trình ở trên)
         const crackDuration = Math.max(0, (crackGroup.children.length - 1)) * 0.07 + 0.32;
         const step = 0.05;
         const steps = Math.max(2, Math.round(crackDuration / step));
@@ -261,7 +274,7 @@ const PuzzleStage = (() => {
         gsap.fromTo(gShake, { x: 0, y: 0 }, { keyframes, ease: 'none' });
       }, 'crack')
       .to({}, { duration: 0.1 })
-      .call(() => setState('MOON_SHATTERING'))
+      .call(() => { setState('MOON_SHATTERING'); AudioEngine.playShatterBoom(); })
       // Phase 3 — vỡ thành 10 mảnh, mỗi mảnh bay theo hướng/tốc độ khác nhau
       .call(() => {
         disc.style.opacity = '0';
