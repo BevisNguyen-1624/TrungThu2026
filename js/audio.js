@@ -43,6 +43,25 @@ const AudioEngine = (() => {
     return buf;
   }
 
+  /* Tiếng "tách" nhỏ — dùng cho mỗi vết nứt xuất hiện */
+  function playCrackTick(){
+    const c = ensureCtx();
+    if(!c) return;
+    try{
+      const dur = 0.09 + Math.random()*0.05;
+      const src = c.createBufferSource();
+      src.buffer = noiseBuffer(dur);
+      const bp = c.createBiquadFilter();
+      bp.type = 'bandpass';
+      bp.frequency.value = 1500 + Math.random()*2200;
+      bp.Q.value = 1.1;
+      const g = c.createGain();
+      g.gain.setValueAtTime(0.22, c.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + dur);
+      src.connect(bp).connect(g).connect(masterGain);
+      src.start(); src.stop(c.currentTime + dur);
+    }catch(e){}
+  }
 
   /* Tiếng "vỡ" lớn — dùng đúng lúc mặt trăng tách thành 10 mảnh */
   function playShatterBoom(){
