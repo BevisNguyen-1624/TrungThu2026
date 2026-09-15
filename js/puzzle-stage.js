@@ -249,8 +249,7 @@ const PuzzleStage = (() => {
         order.forEach((childIdx, orderPos) => {
           gsap.to(children[childIdx], {
             opacity: 1, duration: 0.55, ease: 'power1.out',
-            delay: orderPos * 0.22,
-            onStart: () => AudioEngine.playCrackTick()
+            delay: orderPos * 0.22
           });
         });
       }, 'crack')
