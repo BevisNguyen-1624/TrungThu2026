@@ -54,6 +54,6 @@ const CONFIG = {
   { id:7, type:"mcq", prompt:"Hình ảnh con vật nào thường xuất hiện trong điệu múa sôi động vào đêm hội Trung Thu?", options:["Con Mèo","Con Lân","Con Ngựa","Con Phượng"], answer:1 },
   { id:8, type:"short", prompt:"Trái cây đặc trưng màu đỏ/màu xanh, vỏ dày, cúng rằm Trung Thu thường được tỉa thành hình con chó xù tên là quả gì?", answer:["Quả bưởi","Trái bưởi","Bưởi"] },
   { id:9, type:"mcq", prompt:"Mâm cỗ Trung Thu truyền thống thường gồm những gì?", options:["Bánh, ngũ quả và đèn lồng","Bánh chưng, dưa hành","Hoa đào, bánh tét","Trái cây mùa hè, hoa cúc"], answer:0 },
-  { id:10, type:"mcq", prompt:"Đồ chơi dân gian Trung Thu làm bằng bột gạo nhuộm màu, nặn thành các hình thù đáng yêu gọi là gì?", answer:["Tè he","Tò he","Búp bê bột","Đồ chơi đất nặn"], answer:1 }
+  { id:10, type:"mcq", prompt:"Đồ chơi dân gian Trung Thu làm bằng bột gạo nhuộm màu, nặn thành các hình thù đáng yêu gọi là gì?", options:["Tè he","Tò he","Búp bê bột","Đồ chơi đất nặn"], answer:1 }
 ]
 };
