@@ -208,7 +208,12 @@ button{font-family:var(--font-body); cursor:pointer;}
 .modal-close{position:absolute; top:16px; right:16px; background:rgba(255,255,255,.08); border:none; width:32px; height:32px; border-radius:50%; color:var(--white); font-size:16px; display:flex; align-items:center; justify-content:center;}
 .modal-tag{font-size:12px; font-weight:700; color:var(--moon-gold); letter-spacing:1px; text-transform:uppercase; margin-bottom:8px;}
 .modal h3{font-size:20px; line-height:1.4; color:var(--white); margin-bottom:18px; padding-right:26px;}
-.options{display:flex; flex-direction:column; gap:10px; margin-bottom:18px;}
+.options{
+  display:grid; 
+  grid-template-columns:1fr 1fr; 
+  gap:10px; 
+  margin-bottom:18px;
+}
 .option{
   text-align:left; border:1.5px solid rgba(255,255,255,.14); background:rgba(255,255,255,.04);
   border-radius:13px; padding:13px 15px; font-size:14.5px; color:var(--white); font-weight:500;
@@ -244,7 +249,7 @@ button{font-family:var(--font-body); cursor:pointer;}
 .complete-title{font-size:clamp(24px,7vw,32px); margin-bottom:10px;}
 .complete-sub{color:#C6CFEA; font-size:14.5px; line-height:1.7; max-width:340px; margin:0 auto 26px;}
 .stats-row{
-  display:flex; gap:12px; justify-content:center; max-width:340px; margin:0 auto 22px;
+  display:none; /* CẬP NHẬT: Ẩn phần thời gian + điểm ở stage endgame */
 }
 .stat{
   flex:1; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.12);
@@ -252,6 +257,14 @@ button{font-family:var(--font-body); cursor:pointer;}
 }
 .stat-label{font-size:11.5px; color:#9FADD1; font-weight:600; letter-spacing:.3px;}
 .stat-value{font-size:20px; font-weight:800; color:var(--white); font-family:var(--font-display); font-variant-numeric:tabular-nums;}
+
+/* CẬP NHẬT: Button "Thử lại" dài ngang mặt trăng */
+#replay-btn{
+  width:100%;
+  max-width:220px;
+  margin:20px auto 0;
+  display:block;
+}
 
 .reward-box{
   background:rgba(244,197,114,.08); border:1.5px dashed rgba(244,197,114,.5); border-radius:16px;
