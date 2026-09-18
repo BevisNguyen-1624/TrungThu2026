@@ -245,17 +245,17 @@ function calculateScore(seconds){
   return Math.max(minScore, Math.round(baseScore - seconds * penaltyPerSecond));
 }
 
-// CẬP NHẬT: Simplify showCompletion - chỉ ghi 1 dòng log duy nhất với số câu đúng
+// CẬP NHẬT: Simplify showCompletion - chỉ chúc mừng, không hiển thị điểm/thời gian
 function showCompletion(){
   const seconds = stopTimer();
   const score = calculateScore(seconds);
-  document.getElementById('final-time').textContent = formatTime(seconds);
-  document.getElementById('final-score').textContent = score.toLocaleString('vi-VN');
+  // CẬP NHẬT: Xóa dòng ghi vào UI (đã bỏ element HTML)
+  // Chỉ cần hiển thị screen-complete
   showScreen('screen-complete');
   confettiFall();
   AudioEngine.stopBgm(1500);
   
-  // Ghi 1 dòng duy nhất: employeeCode + số câu đúng (10/10) + thời gian + điểm
+  // Ghi 1 dòng duy nhất vào backend: employeeCode + số câu đúng (10/10) + thời gian + điểm
   logEvent('game_completed', {
     correctAnswers: TOTAL,
     totalQuestions: TOTAL,
