@@ -134,7 +134,7 @@ function checkAnswer(){
     fb.textContent = "✨ Chính xác! Mảnh trăng đang bay về vị trí...";
     fb.className = 'feedback correct';
     state.unlocked.add(pc.id);
-    logEvent('piece_unlocked', { pieceId: pc.id, totalUnlocked: state.unlocked.size, elapsedSeconds: Math.round(currentElapsedSeconds()) });
+    // CẬP NHẬT: Xóa logEvent piece_unlocked — chỉ log 1 dòng duy nhất ở endgame
     updateProgressUI();
     setTimeout(()=>{
       closePuzzle();
@@ -245,21 +245,36 @@ function calculateScore(seconds){
   return Math.max(minScore, Math.round(baseScore - seconds * penaltyPerSecond));
 }
 
+// CẬP NHẬT: Simplify showCompletion - chỉ ghi 1 dòng log duy nhất với số câu đúng
 function showCompletion(){
   const seconds = stopTimer();
   const score = calculateScore(seconds);
-  document.getElementById('reward-code').textContent = CONFIG.reward.code;
-  document.querySelector('.reward-note').textContent = CONFIG.reward.note;
   document.getElementById('final-time').textContent = formatTime(seconds);
   document.getElementById('final-score').textContent = score.toLocaleString('vi-VN');
   showScreen('screen-complete');
   confettiFall();
   AudioEngine.stopBgm(1500);
-  logEvent('campaign_completed', {
-    rewardCode: CONFIG.reward.code,
+  
+  // Ghi 1 dòng duy nhất: employeeCode + số câu đúng (10/10) + thời gian + điểm
+  logEvent('game_completed', {
+    correctAnswers: TOTAL,
+    totalQuestions: TOTAL,
     elapsedSeconds: Math.round(seconds),
-    score
+    score: score
   });
+}
+
+/* ------------------- reset game để chơi lại -------------------------------- */
+function resetGame(){
+  state.unlocked.clear();
+  state.activePieceId = null;
+  state.selectedOptionIdx = null;
+  playStartTime = null;
+  finalElapsedSeconds = 0;
+  clearInterval(timerInterval);
+  document.getElementById('employee-code').value = '';
+  document.getElementById('login-err').textContent = '';
+  showScreen('screen-login');
 }
 
 /* ---------------- khởi động màn puzzle: đo layout thật rồi chạy intro ------ */
@@ -326,22 +341,26 @@ document.getElementById('login-form').addEventListener('submit', async (e)=>{
   state.employeeTitle = result.title;
   logEvent('login', {});
 
+  // CẬP NHẬT: Hiển thị họ tên và chức danh đẹp hơn
   document.getElementById('confirm-name').textContent = result.name || code;
   document.getElementById('confirm-title').textContent = result.title || `Mã nhân viên: ${code}`;
   document.getElementById('home-heading').textContent = `Chào bạn, ${result.name || code} 👋`;
   showScreen('screen-confirm');
 });
+
 document.getElementById('confirm-start-btn').addEventListener('click', ()=>{
   logEvent('journey_started', {});
   AudioEngine.unlock();     // mở khoá audio context ngay trong cử chỉ bấm của người dùng
   AudioEngine.startBgm();   // nhạc nền Trung thu bắt đầu, chạy xuyên suốt phần giải đố
   startJourney();
 });
+
 document.getElementById('confirm-back-btn').addEventListener('click', ()=>{
   document.getElementById('employee-code').value = '';
   document.getElementById('login-err').textContent = '';
   showScreen('screen-login');
 });
+
 document.getElementById('sound-toggle').addEventListener('click', ()=>{
   const muted = AudioEngine.toggleMute();
   const btn = document.getElementById('sound-toggle');
@@ -349,14 +368,12 @@ document.getElementById('sound-toggle').addEventListener('click', ()=>{
   btn.classList.toggle('muted', muted);
   btn.setAttribute('aria-pressed', String(muted));
 });
+
 document.getElementById('modal-close').addEventListener('click', closePuzzle);
 document.getElementById('modal-submit').addEventListener('click', checkAnswer);
 document.getElementById('puzzle-overlay').addEventListener('click', (e)=>{ if(e.target.id==='puzzle-overlay') closePuzzle(); });
-document.getElementById('copy-reward').addEventListener('click', ()=>{
-  navigator.clipboard?.writeText(CONFIG.reward.code).then(()=>{
-    const btn = document.getElementById('copy-reward');
-    const old = btn.textContent; btn.textContent = "Đã sao chép ✓";
-    setTimeout(()=> btn.textContent = old, 1500);
-  });
-});
+
+// CẬP NHẬT: Button thử lại - reset game và quay về login
+document.getElementById('replay-btn').addEventListener('click', resetGame);
+
 document.title = CONFIG.campaignTitle + " · YODY";
